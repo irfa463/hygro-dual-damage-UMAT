@@ -2,6 +2,11 @@
 
 Coupled hygro-viscoelastic dual-damage UMAT for 3D-printed CF/Onyx composites in Abaqus/Standard.
 
+![Graphical Abstract](figures/graphical_abstract.jpg)
+
+ **Four-step research narrative:** biphasic experimental degradation → Carter–Kibler dual-population transport → dual-damage UMAT calibrated 0–90 days → bootstrap identifiability criterion
+
+
 ## Overview
 This repository contains a FORTRAN UMAT implementation for modelling moisture-driven degradation in fibre-reinforced polymer composites. The model combines coupled moisture transport, reversible plasticisation, irreversible hydrolytic damage, and viscoelastic response in a finite-element framework.
 
