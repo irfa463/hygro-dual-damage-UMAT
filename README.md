@@ -2,7 +2,7 @@
 
 Coupled hygro-viscoelastic dual-damage UMAT for 3D-printed CF/Onyx composites in Abaqus/Standard.
 
-![Graphical Abstract](figures/graphical_abstract.jpg)
+![Graphical Abstract](figures/graphical_abstract.png)
 
  **Four-step research narrative:** biphasic experimental degradation → Carter–Kibler dual-population transport → dual-damage UMAT calibrated 0–90 days → bootstrap identifiability criterion
 
