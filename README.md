@@ -27,7 +27,7 @@ used in calibration and uncertainty quantification.
 
 > **Thesis (open access):** Irfan Irfan, *Coupled Hygro-Viscoelastic
 > Dual-Damage UMAT for 3D-Printed CF/Onyx Composites*, LUT University,
-> 2026. [URN:NBN:fi-fe2026060260742](https://lutpub.lut.fi/handle/10024/169966)
+> 2026. [URN:NBN:fi-fe2026060260742](https://urn.fi/URN:NBN:fi-fe2026060260742)
 
 ---
 
@@ -257,7 +257,7 @@ If you use this code, please cite the thesis:
 > 3D-Printed CF/Onyx Composites*. Master's Thesis, LUT University,
 > Finland, 2026.
 > URN:NBN:fi-fe2026060260742
-> https://lutpub.lut.fi/handle/10024/169966
+> https://urn.fi/URN:NBN:fi-fe2026060260742
 
 A `CITATION.cff` is included in this repository for automated citation
 by GitHub, Zenodo, and Zotero.
