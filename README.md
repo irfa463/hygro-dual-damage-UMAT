@@ -1,6 +1,7 @@
 # hygro-dual-damage-UMAT
 
-Coupled hygro-viscoelastic dual-damage UMAT for 3D-printed CF/Onyx composites in Abaqus/Standard.
+A hygro-dual-damage constitutive framework with uncertainty quantification
+for durability prediction of 3D-printed carbon fibre-reinforced nylon composites.
 
 ![Graphical Abstract](figures/graphical_abstract.png)
 
@@ -9,62 +10,92 @@ Coupled hygro-viscoelastic dual-damage UMAT for 3D-printed CF/Onyx composites in
 ![Solver: Abaqus/Standard](https://img.shields.io/badge/Solver-Abaqus%2FStandard-orange)
 ![Thesis: LUTPub](https://img.shields.io/badge/Thesis-URN%3ANBN%3Afi--fe2026060260742-green)
 
-**Four-step research narrative:**
-biphasic experimental degradation → Carter–Kibler dual-population transport →
-dual-damage UMAT calibrated 0–90 days → bootstrap identifiability criterion
+> **Associated journal paper (under review):** Irfan Irfan, *A Hygro-Dual-Damage
+> Constitutive Framework with Uncertainty Quantification for Durability Prediction
+> of 3D-Printed Carbon Fibre-Reinforced Nylon Composites*, 2026. *(manuscript in preparation)*
 
-## Overview
-
-This repository contains a FORTRAN UMAT implementation for modelling
-moisture-driven degradation in fibre-reinforced polymer composites.
-The model combines coupled moisture transport, reversible plasticisation,
-irreversible hydrolytic damage, and viscoelastic response in a
-finite-element framework.
-
-The project also includes Python tools for sensitivity analysis and
-parametric bootstrapping, plus publication-quality Matplotlib figures
-used in calibration and uncertainty quantification.
-
-> **Thesis (open access):** Irfan Irfan, *Coupled Hygro-Viscoelastic
-> Dual-Damage UMAT for 3D-Printed CF/Onyx Composites*, LUT University,
-> 2026. [URN:NBN:fi-fe2026060260742](https://urn.fi/URN:NBN:fi-fe2026060260742)
+> **Thesis (open access):** Irfan Irfan, *Coupled Hygro-Viscoelastic Dual-Damage
+> UMAT for 3D-Printed CF/Onyx Composites*, LUT University, 2026.
+> [URN:NBN:fi-fe2026060260742](https://urn.fi/URN:NBN:fi-fe2026060260742)
 
 ---
 
-## Main Features
+## Overview
 
-- FORTRAN UMAT implementation for Abaqus/Standard.
-- Hygro-mechanical degradation modelling for composite materials.
-- Python surrogate for sensitivity analysis and uncertainty quantification.
-- Bootstrap-based parameter identifiability study.
-- Publication-quality plots and processed data.
+This repository provides the FORTRAN UMAT subroutine and experimental validation
+data accompanying the journal paper listed above. The constitutive framework models
+moisture-driven degradation in 3D-printed carbon fibre-reinforced nylon (CF/Onyx)
+composites and integrates:
+
+- Carter–Kibler dual-population moisture transport
+- Reversible plasticisation damage (mobile moisture driven)
+- Irreversible hydrolytic damage (bound moisture driven)
+- Bootstrap-based parametric uncertainty quantification
+
+**Four-step research narrative:**
+biphasic experimental degradation → Carter–Kibler dual-population transport →
+dual-damage UMAT calibrated 0–90 days → bootstrap identifiability criterion
 
 ---
 
 ## Repository Structure
 
 ```text
-UMAT/                FORTRAN source and Abaqus verification input files
-Python_surrogate/    Python scripts for surrogate modelling and UQ
-figures/             Matplotlib figures used in the study
-data/                Experimental and processed CSV data
-docs/                Theory notes and manuscript drafts
-examples/            Simple Abaqus example and usage script
+hygro-dual-damage-UMAT/
+├── UMAT/
+│   └── hygro_dual_damage_UMAT.for     # Main FORTRAN UMAT source
+├── Python_surrogate/
+│   ├── surrogate.py                   # Surrogate model and post-processing
+│   ├── bootstrap_uq.py                # Parametric bootstrap UQ workflow
+│   └── sensitivity_oat.py            # One-at-a-time sensitivity analysis
+├── data/
+│   ├── README_data.md                 # Data description and units
+│   ├── moisture_absorption_raw.xlsx   # Raw gravimetric moisture uptake (0–90 days)
+│   ├── moisture_absorption.csv        # Cleaned/averaged moisture data
+│   ├── DMA_results.csv                # Storage modulus E' vs temperature at 1 Hz
+│   └── tensile_data.csv               # Tensile stress–strain (0-day and 90-day)
+├── figures/
+│   ├── graphical_abstract.png
+│   ├── calibration_fit.png
+│   ├── bootstrap_ci.png
+│   ├── damage_evolution.png
+│   └── sensitivity_oat.png
+├── examples/
+│   └── verification_example.inp       # Abaqus verification input file
+├── docs/
+│   └── theory_notes.pdf               # Constitutive model derivations
+├── CITATION.cff
+├── LICENSE
+└── README.md
 ```
+
+---
+
+## Experimental Data
+
+All experimental data used for model calibration and validation is in the `data/` folder.
+See [`data/README_data.md`](data/README_data.md) for full descriptions.
+
+| File | Description | Units |
+|------|-------------|-------|
+| `moisture_absorption_raw.xlsx` | Raw gravimetric moisture uptake, 3 specimens, 0–90 days | wt% |
+| `moisture_absorption.csv` | Cleaned and averaged moisture absorption data | wt% |
+| `DMA_results.csv` | Storage modulus E' vs temperature at 1 Hz | MPa, °C |
+| `tensile_data.csv` | Tensile stress–strain at 0-day and 90-day conditioning | MPa |
 
 ---
 
 ## UMAT Implementation — Key Algorithms
 
-The UMAT executes three coupled procedures at every integration point
-using a backward-Euler implicit scheme. Full derivations are in
-Appendix A of the thesis (URN:NBN:fi-fe2026060260742).
+The UMAT executes two coupled procedures at every integration point using a
+backward-Euler implicit scheme. Full derivations are provided in the thesis
+(URN:NBN:fi-fe2026060260742) and the accompanying journal paper.
 
 ### A.1 — Carter–Kibler Moisture Diffusion
 
-The coupled mobile/bound moisture ODE system is solved by a 2×2 linear
-system inverted with Cramer's rule. A fallback to explicit Euler is
-triggered if the determinant falls below 10⁻²⁰.
+The coupled mobile/bound moisture ODE system is solved by a 2×2 linear system
+inverted with Cramer's rule. A fallback to explicit Euler is triggered if the
+determinant falls below 10⁻²⁰.
 
 ```fortran
 IF (dtimedays .GT. 0.D0) THEN
@@ -89,16 +120,18 @@ END IF
 Ctotal = MAX(0.D0, MIN(Csat, Cm + Cb))
 ```
 
-> **State variable layout:** `STATEV(7)` → Cₘ, `STATEV(8)` → C_b
+> **State variables:** `STATEV(1)` → Cₘ (mobile moisture), `STATEV(2)` → C_b (bound moisture)
 
 ---
 
 ### A.2 — Dual-Damage Evolution Laws
 
-Reversible plasticisation `P_i` (driven by mobile moisture Cₘ) and
-irreversible hydrolytic damage `H_i` (driven by bound moisture C_b)
-are updated separately. The hydrolytic ratchet enforces `H_i` to be
-monotonically non-decreasing.
+Reversible plasticisation `P_i` (driven by mobile moisture Cₘ) and irreversible
+hydrolytic damage `H_i` (driven by bound moisture C_b) are updated separately.
+The hydrolytic ratchet enforces `H_i` to be monotonically non-decreasing.
+Effective stiffness is degraded as:
+
+**E_eff = E₀ · (1 − P̄) · (1 − H̄)**
 
 ```fortran
 ! Reversible plasticisation driven by mobile moisture Cm
@@ -120,67 +153,35 @@ END DO
 ! Irreversible hydrolysis driven by bound moisture Cb
 DO I=1,3
    IF (Cb .GT. 1.D-10 .AND. dtime_days .GT. 0.D0) THEN
-      expm    = DEXP(-kH(I)*(Cb**mH)*dtime_days)
+      expm     = DEXP(-kH(I)*(Cb**mH)*dtime_days)
       H_target = 1.D0 - (1.D0 - H(I))*expm
-      H(I) = MAX(H(I), H_target)   ! irreversible ratchet
+      H(I)     = MAX(H(I), H_target)   ! irreversible ratchet
    END IF
    H(I) = MAX(0.D0, MIN(0.99D0, H(I)))
 END DO
-```
 
-> **State variable layout:** `STATEV(1:3)` → P_i, `STATEV(4:6)` → H_i
-
----
-
-### A.3 — Damage-Coupled Generalised Maxwell Update
-
-Damage accelerates viscoelastic relaxation by reducing the effective
-relaxation time via τ_J = τ₀ · exp(−s_P·P̄ − s_H·H̄), and scales
-branch moduli through ξ = 1 − ½(P̄ + H̄).
-
-```fortran
+! Effective stiffness degradation
 Pbar = (P(1)+P(2)+P(3))/3.D0
 Hbar = (H(1)+H(2)+H(3))/3.D0
-damage_factor = MAX(0.1D0, MIN(1.D0, 1.D0-0.5D0*(Pbar+Hbar)))
+damage_factor = (1.D0 - Pbar)*(1.D0 - Hbar)
+damage_factor = MAX(0.01D0, MIN(1.D0, damage_factor))
 
-DO K=1,NBR
-   tau0s = PROPS(idx_tau0 + (K-1))
-   tauJ  = MAX(1.D-12, tau0s*sec2day
-  &          * DEXP(-SPfac*Pbar - SHfac*Hbar))
-   alpha = MIN(1.0D12, dtime_days/(tauJ + 1.D-18))
-   IF (alpha .LT. 1.D-6) THEN
-      gamma = alpha - alpha*alpha
-   ELSE
-      gamma = alpha/(1.D0 + alpha)
-   END IF
+DO I=1,6
    DO J=1,6
-      iv     = i0 + (K-1)*6 + J
-      ev_new = (STATEV(iv) + alpha*epsm(J))/(1.D0 + alpha)
-      IF (ABS(ev_new).GT.1.D6 .OR. ev_new.NE.ev_new)
-  &      ev_new = 0.5D0*STATEV(iv)
-      STATEV(iv) = ev_new
-      delta(J)   = epsm(J) - ev_new
-   END DO
-   DO I=1,6
-      DO J=1,6
-         gJk = PROPS(idx_g + (K-1)*6 + (J-1))
-         sig_vis(I)  = sig_vis(I)
-  &                  + gJk*damage_factor*Cij(I,J)*delta(J)
-         DDSDDE(I,J) = DDSDDE(I,J)
-  &                  + gJk*damage_factor*gamma*Cij(I,J)
-      END DO
+      DDSDDE(I,J) = damage_factor * Cij(I,J)
    END DO
 END DO
+STRESS = MATMUL(DDSDDE, STRAN + DSTRAN)
 ```
 
-> **State variable layout:** `STATEV(9 : 9+6·N_br)` → viscous overstress strains
+> **State variables:** `STATEV(3:5)` → P_i (plasticisation), `STATEV(6:8)` → H_i (hydrolytic damage)
 
 ---
 
 ## Python Surrogate — Bootstrap UQ Workflow
 
-From `Python_surrogate/bootstrap_uq.py`. The surrogate reproduces
-UMAT prediction intervals without an Abaqus runtime.
+From `Python_surrogate/bootstrap_uq.py`. Reproduces durability prediction
+intervals without an Abaqus runtime.
 
 ```python
 import numpy as np
@@ -207,9 +208,9 @@ for i in range(1000):
 ci_lower, ci_upper = np.percentile(boot_params, [2.5, 97.5], axis=0)
 ```
 
-**Key finding:** A model achieving <1.2 % RMSE over 90 days still
-carries ±22 pp one-year prediction uncertainty — reducible only by
-data beyond the bound-moisture trapping timescale (τ_trap ≈ 166 days).
+**Key finding:** A model achieving <1.2 % RMSE over 90 days still carries
+±22 pp one-year prediction uncertainty — reducible only by data beyond the
+bound-moisture trapping timescale (τ_trap ≈ 166 days).
 
 ---
 
@@ -225,52 +226,57 @@ data beyond the bound-moisture trapping timescale (τ_trap ≈ 166 days).
 
 ---
 
-## Files
-
-- `UMAT/H2_coupled.for` — main UMAT source file.
-- `Python_surrogate/surrogate.py` — surrogate model and post-processing.
-- `Python_surrogate/bootstrap_uq.py` — parametric bootstrap workflow.
-- `Python_surrogate/sensitivity_oat.py` — one-at-a-time sensitivity analysis.
-- `figures/` — calibration plots, damage evolution, bootstrap intervals, sensitivity results.
-- `data/` — raw and cleaned experimental datasets.
-
----
-
 ## How to Use
 
-1. Compile the UMAT with Abaqus/Standard.
-2. Link the subroutine in your input file.
-3. Run the verification example in `examples/`.
-4. Use the Python scripts to reproduce sensitivity and bootstrap analyses.
+1. Copy `UMAT/hygro_dual_damage_UMAT.for` into your Abaqus working directory.
+2. Reference the subroutine in your `.inp` file with `*USER MATERIAL`.
+3. Run the verification case in `examples/verification_example.inp`.
+4. Use the Python scripts in `Python_surrogate/` to reproduce sensitivity
+   and bootstrap UQ analyses.
 
 ```text
-Abaqus input file → UMAT simulation → Python surrogate → sensitivity analysis → bootstrap UQ → figures
+Abaqus .inp → UMAT simulation → Python surrogate → sensitivity analysis → bootstrap UQ → figures
 ```
 
 ---
 
 ## Citation
 
-If you use this code, please cite the thesis:
+If you use this repository, please cite both the journal paper and the thesis:
 
-> Irfan Irfan. *Coupled Hygro-Viscoelastic Dual-Damage UMAT for
-> 3D-Printed CF/Onyx Composites*. Master's Thesis, LUT University,
-> Finland, 2026.
-> URN:NBN:fi-fe2026060260742
-> https://urn.fi/URN:NBN:fi-fe2026060260742
+**Journal paper (primary reference):**
+```bibtex
+@article{irfan2026hygrodamage,
+  author  = {Irfan Irfan},
+  title   = {A Hygro-Dual-Damage Constitutive Framework with Uncertainty
+             Quantification for Durability Prediction of {3D}-Printed
+             Carbon Fibre-Reinforced Nylon Composites},
+  journal = {(under review)},
+  year    = {2026}
+}
+```
 
-A `CITATION.cff` is included in this repository for automated citation
-by GitHub, Zenodo, and Zotero.
+**Thesis (theoretical foundation and full derivations):**
+```bibtex
+@mastersthesis{irfan2026thesis,
+  author  = {Irfan Irfan},
+  title   = {Coupled Hygro-Viscoelastic Dual-Damage {UMAT} for
+             3D-Printed {CF/Onyx} Composites},
+  school  = {LUT University},
+  year    = {2026},
+  address = {Lappeenranta, Finland},
+  url     = {https://urn.fi/URN:NBN:fi-fe2026060260742}
+}
+```
+
+A `CITATION.cff` is included for automated citation by GitHub, Zenodo, and Zotero.
 
 ---
 
 ## License
 
-This work is licensed under the
-[Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+You are free to share and adapt this material for any purpose, including
+commercially, as long as you give appropriate credit and indicate any changes.
 
-You are free to share and adapt this material for any purpose,
-including commercially, as long as you give appropriate credit
-(cite the thesis above) and indicate any changes made.
-
-© 2026 Irfan Irfan, LUT University.
+© 2026 Irfan Irfan, LUT University
