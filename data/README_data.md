@@ -44,4 +44,4 @@ Data supports model calibration and validation in the associated journal paper.
 - Fibre layup: (add your layup, e.g. [0/90]s or isotropic Onyx)
 - Specimens dried and weighed before immersion (T0 baseline)
 - After conditioning, surface-dried with tissue before testing
-- Testing conducted at LUT University, 2025
+
