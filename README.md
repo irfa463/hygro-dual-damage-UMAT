@@ -73,15 +73,17 @@ hygro-dual-damage-UMAT/
 
 ## Experimental Data
 
-All experimental data used for model calibration and validation is in the `data/` folder.
+Tensile characterisation data for CF/Onyx specimens conditioned in distilled
+water at 26 °C (0–90 days) is available in the `data/` folder.
 See [`data/README_data.md`](data/README_data.md) for full descriptions.
 
-| File | Description | Units |
-|------|-------------|-------|
-| `moisture_absorption_raw.xlsx` | Raw gravimetric moisture uptake, 3 specimens, 0–90 days | wt% |
-| `moisture_absorption.csv` | Cleaned and averaged moisture absorption data | wt% |
-| `DMA_results.csv` | Storage modulus E' vs temperature at 1 Hz | MPa, °C |
-| `tensile_data.csv` | Tensile stress–strain at 0-day and 90-day conditioning | MPa |
+| File | Conditioning | Description |
+|------|-------------|-------------|
+| `tensile_T0.csv` | 0 days (dry) | As-printed baseline |
+| `tensile_T15.csv` | 15 days | Post-immersion tensile data |
+| `tensile_T30.csv` | 30 days | Post-immersion tensile data |
+| `tensile_T60.csv` | 60 days | Post-immersion tensile data |
+| `tensile_T90.csv` | 90 days | Post-immersion tensile data |
 
 ---
 
