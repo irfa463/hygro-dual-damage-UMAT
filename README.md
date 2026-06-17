@@ -249,7 +249,7 @@ If you use this repository, please cite both the journal paper and the thesis:
 **Journal paper (primary reference):**
 ```bibtex
 @article{irfan2026hygrodamage,
-  author  = {Irfan Irfan},
+  author  = {Irfan Irfan, Marcelo L Ribeiro, José Humberto S Almeida Jr},
   title   = {A Hygro-Dual-Damage Constitutive Framework with Uncertainty
              Quantification for Durability Prediction of {3D}-Printed
              Carbon Fibre-Reinforced Nylon Composites},
