@@ -49,11 +49,8 @@ hygro-dual-damage-UMAT/
 │   ├── bootstrap_uq.py                # Parametric bootstrap UQ workflow
 │   └── sensitivity_oat.py            # One-at-a-time sensitivity analysis
 ├── data/
-│   ├── README_data.md                 # Data description and units
-│   ├── moisture_absorption_raw.xlsx   # Raw gravimetric moisture uptake (0–90 days)
-│   ├── moisture_absorption.csv        # Cleaned/averaged moisture data
-│   ├── DMA_results.csv                # Storage modulus E' vs temperature at 1 Hz
-│   └── tensile_data.csv               # Tensile stress–strain (0-day and 90-day)
+│   ├── README_data.md                 # Data description               
+│   └── tensile_data.csv               # Tensile stress–strain (0--90 day)
 ├── figures/
 │   ├── graphical_abstract.png
 │   ├── calibration_fit.png
