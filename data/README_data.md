@@ -12,7 +12,7 @@ Data supports model calibration and validation in the associated journal paper.
 | Immersion medium | Distilled water |
 | Temperature | 26 °C |
 | Conditioning periods | 0, 15, 30, 60, 90 days |
-| Standard | (add your standard, e.g. ASTM D3039) |
+| Standard | ( ASTM D3039) |
 
 ## Files
 
