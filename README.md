@@ -215,13 +215,10 @@ bound-moisture trapping timescale (τ_trap ≈ 166 days).
 
 ## Results Gallery
 
-| Calibration Fit | Bootstrap Prediction Interval |
-|:-:|:-:|
-| ![Calibration](figures/calibration_fit.png) | ![Bootstrap CI](figures/bootstrap_ci.png) |
 
-| Dual Damage Evolution | OAT Sensitivity |
-|:-:|:-:|
-| ![Damage](figures/damage_evolution.png) | ![Sensitivity](figures/sensitivity_oat.png) |
+![surrogate_sensitivity](figures/surrogate_sensitivity (8).pdf) |
+
+
 
 ---
 
