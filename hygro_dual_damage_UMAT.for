@@ -166,8 +166,6 @@ C=====================================================================
 
 C=====================================================================
 C  STEP 9: Damage-degraded orthotropic stiffness (BOTH P and H on E)
-C           Eeff(I) = E_i * (1 - bP(I)*P(I) - bH(I)*H(I))
-C           This is the key correction vs CK-damage-2.for
 C=====================================================================
       DO I=1,3
         Eeff(I) = PROPS(I)*(1.D0 - bP(I)*P(I) - bH(I)*H(I))
@@ -237,7 +235,7 @@ C=====================================================================
       END IF
 
 C=====================================================================
-C  STEP 13: Write STATEV back (only 8 variables — no viscous strains)
+C  STEP 13: Write STATEV back
 C=====================================================================
       STATEV(1)=P(1); STATEV(2)=P(2); STATEV(3)=P(3)
       STATEV(4)=H(1); STATEV(5)=H(2); STATEV(6)=H(3)
@@ -261,7 +259,7 @@ C=====================================================================
       DRPLDT = 0.D0
 
 C=====================================================================
-C  STEP 15: Diagnostic output (element 1, GP 1 only)
+C  STEP 15: Diagnostic output 
 C=====================================================================
       IF (NOEL.EQ.1 .AND. NPT.EQ.1) THEN
         IF (KINC.EQ.1 .OR. MOD(KINC,500).EQ.0) THEN
