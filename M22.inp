@@ -1,0 +1,75 @@
+*Heading
+*Node
+1, 0.,0.,0.
+2, 1.,0.,0.
+3, 1.,1.,0.
+4, 0.,1.,0.
+5, 0.,0.,1.
+6, 1.,0.,1.
+7, 1.,1.,1.
+8, 0.,1.,1.
+*Element, type=C3D8, elset=EALL
+1, 1,2,3,4,5,6,7,8
+*Nset, nset=NX0
+1,4,5,8
+*Nset, nset=NX1
+2,3,6,7
+*Nset, nset=ALLN
+1,2,3,4,5,6,7,8
+*Elset, elset=EALL
+1,
+*Material, name=CF_ONYX_UNIFIED
+*User Material, constants=35
+16950.,3000.,3000.,0.28,0.28,0.35,1500.,1500.,
+1000.,0.0003,1.1574074e-5,1.,1.5646,0.50,0.50,0.01593,
+0.015,0.015,0.80,0.54,0.08,0.15,0.15,0.08,
+0.15,0.10,2.0,0.006,0.00603,0.011,2.,0.336,
+0.25,278.,15.,
+*DEPVAR
+20
+**
+*Solid Section, elset=EALL, material=CF_ONYX_UNIFIED
+**
+*Boundary
+NX0, 1, 1, 0.
+ALLN, 2, 2, 0.
+ALLN, 3, 3, 0.
+**
+** ========== STEP 1: ELASTIC LOADING (pristine, dry) ==========
+*Step, name=ELASTIC, nlgeom=NO
+*Static
+1.0, 1.0, 1e-8, 1.0
+*Boundary, op=NEW
+NX0, 1, 1, 0.
+ALLN, 2, 2, 0.
+ALLN, 3, 3, 0.
+NX1, 1, 1, 0.012
+*Output, field, variable=PRESELECT
+*Element Output, elset=EALL
+S, SDV, EVOL
+*End Step
+*Step, name=AGE_90, nlgeom=NO
+*Static
+1.0, 7776000., 1.0, 86400.
+*Boundary, op=NEW
+NX0, 1, 1, 0.
+ALLN, 2, 2, 0.
+ALLN, 3, 3, 0.
+NX1, 1, 1, 0.012
+*Output, field, frequency=10
+*Element Output, elset=EALL
+S, SDV, EVOL
+*End Step
+** ========== STEP 3: RELOAD after aging ==========
+*Step, name=RELOAD, nlgeom=NO
+*Static
+1.0, 1.0, 1e-8, 1.0
+*Boundary, op=NEW
+NX0, 1, 1, 0.
+ALLN, 2, 2, 0.
+ALLN, 3, 3, 0.
+NX1, 1, 1, 0.012
+*Output, field, variable=PRESELECT
+*Element Output, elset=EALL
+S, SDV, EVOL
+*End Step
